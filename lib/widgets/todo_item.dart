@@ -4,7 +4,14 @@ import 'package:flutter_application_1/utils/app_colors.dart';
 
 class TodoItem extends StatelessWidget {
   final ToDo todo;
-  const TodoItem({super.key, required this.todo});
+  final onToDoChanged;
+  final onDeleteItem;
+
+  const TodoItem(
+      {super.key,
+      required this.todo,
+      required this.onToDoChanged,
+      required this.onDeleteItem});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +20,7 @@ class TodoItem extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 15),
       child: ListTile(
         onTap: () {
-          print('Check todo item');
+          onToDoChanged(todo);
         },
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
@@ -43,7 +50,7 @@ class TodoItem extends StatelessWidget {
             iconSize: 18,
             icon: const Icon(Icons.delete),
             onPressed: () {
-              print('Click delete item');
+              onDeleteItem(todo.id);
             },
           ),
         ),

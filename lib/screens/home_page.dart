@@ -12,34 +12,108 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final todoList = ToDo.todoList();
+  final _todoController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: AppColors.bg,
         appBar: _buildAppBar(),
-        body: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-          child: Column(
-            children: [
-              searchBox(),
-              Expanded(
-                  child: ListView(
+        body: Stack(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+              child: Column(
                 children: [
-                  Container(
-                    margin: const EdgeInsets.only(top: 50, bottom: 20),
-                    child: const Text(
-                      'All Todos',
-                      style:
-                          TextStyle(fontSize: 30, fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                  for (ToDo todo in todoList) TodoItem(todo: todo)
+                  searchBox(),
+                  Expanded(
+                      child: ListView(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(top: 50, bottom: 20),
+                        child: const Text(
+                          'All Todos',
+                          style: TextStyle(
+                              fontSize: 30, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                      for (ToDo todo in todoList)
+                        TodoItem(
+                          todo: todo,
+                          onToDoChanged: _handleToDoChange,
+                          onDeleteItem: _deleteToDoItem,
+                        )
+                    ],
+                  ))
                 ],
-              ))
-            ],
-          ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Row(
+                children: [
+                  Expanded(
+                      child: Container(
+                    margin:
+                        const EdgeInsets.only(bottom: 50, left: 20, right: 20),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10)),
+                    child: TextField(
+                      controller: _todoController,
+                      decoration: const InputDecoration(
+                          hintText: 'Add new todo item',
+                          border: InputBorder.none),
+                    ),
+                  )),
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 50, right: 20),
+                    child: ElevatedButton(
+                      // ignore: sort_child_properties_last
+                      child: const Text(
+                        '+',
+                        style: TextStyle(
+                          fontSize: 40,
+                        ),
+                      ),
+                      onPressed: () {
+                        // ignore: avoid_print
+                        _addToDoItem(_todoController.text);
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.blue,
+                          minimumSize: const Size(60, 60),
+                          elevation: 10),
+                    ),
+                  )
+                ],
+              ),
+            )
+          ],
         ));
+  }
+
+  void _handleToDoChange(ToDo todo) {
+    setState(() {
+      todo.isDone = !todo.isDone;
+    });
+  }
+
+  void _deleteToDoItem(String id) {
+    setState(() {
+      todoList.removeWhere((item) => item.id == id);
+    });
+  }
+
+  void _addToDoItem(String toDo) {
+    setState(() {
+      todoList.add(ToDo(
+          id: DateTime.now().microsecondsSinceEpoch.toString(),
+          todoText: toDo));
+    });
+    _todoController.clear();
   }
 
   Widget searchBox() {
