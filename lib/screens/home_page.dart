@@ -62,6 +62,7 @@ class _HomePageState extends State<HomePage> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10)),
                     child: TextField(
+                      keyboardType: TextInputType.none,
                       controller: _todoController,
                       decoration: const InputDecoration(
                           hintText: 'Add new todo item',
